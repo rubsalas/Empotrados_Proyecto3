@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uploaded Image</title>
+</head>
+<body>
+    <h1>Uploaded Image</h1>
+    <img id="uploadedImage" src="" alt="Uploaded Image">
+    
+    <script>
+        // Get the image data from the server
+        fetch('/get_image')
+            .then(response => response.text())
+            .then(imageData => {
+                document.getElementById('uploadedImage').src = 'data:image/jpeg;base64,' + imageData;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Get Image</title>
+</head>
+<body>
+    <h1>Get Latest Image</h1>
+    <form action="{{ url_for('get_image') }}" method="get">
+        <button type="submit">Get Image</button>
+    </form>
+    <img id="latestImage" src="" alt="Latest Image" style="display:none;">
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch('/get_image')
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Image not found');
+                    }
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const img = document.getElementById('latestImage');
+                    img.src = url;
+                    img.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching image:', error));
+        });
+    </script>
+</body>
+</html>
+
