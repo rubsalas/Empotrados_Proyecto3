@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Alert, View, SafeAreaView, StyleSheet, Text, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { COLORS, icons, images } from '../constants';
+import { COLORS } from '../constants';
 
 import SignInButton from '../components/buttons/SignInButton';
 
