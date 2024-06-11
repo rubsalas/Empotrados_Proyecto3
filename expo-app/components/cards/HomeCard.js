@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { COLORS, SIZES } from '../../constants';
 
 import SensorCard from './SensorCard';
 import MovementsCard from './MovementsCard';
+import ImageCard from './ImageCard';
 
 import useFetch from '../../hook/useFetch';
-
 
 /*
 Card principal del Home screen.
@@ -15,10 +15,10 @@ Incluye el SensorCard donde se enceuntra el estado del sensor,
 la última imagen obtenida por la camara de seguridad y
 el MovementCard con los ultimos moviemientos detectados por el sensor.
 */
-const HomeCard = ( {url} ) => {
-
+const HomeCard = ({ url }) => {
     const [previousDate, setPreviousDate] = useState(null);
     const [isTriggered, setIsTriggered] = useState(false);
+    const [movements, setMovements] = useState([]);
     const timerRef = useRef(null);
 
     /* Uso del hook useFetch para obtener el estado del sensor */
@@ -30,7 +30,7 @@ const HomeCard = ( {url} ) => {
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 1000); // Actualiza los datos cada segundo (1000ms)
+        }, 1000); // Actualiza los datos cada segundo
 
         return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
     }, []);
@@ -45,6 +45,7 @@ const HomeCard = ( {url} ) => {
         if (lastTriggered !== previousDate) {
             setPreviousDate(lastTriggered);
             setIsTriggered(true);
+            setMovements(prevMovements => [lastTriggered, ...prevMovements]);
 
             // Limpiar cualquier temporizador anterior
             if (timerRef.current) {
@@ -67,34 +68,25 @@ const HomeCard = ( {url} ) => {
         };
     }, []);
 
-    const [pictureUrl, setPictureUrl] = useState('https://i.imgur.com/7GAe73O.jpeg')
-
-	return (
-	
+    return (
         <View style={styles.container}>    
             {/* Sensor Triggered */}
             <SensorCard isTriggered={isTriggered}/>
             {/* Image */}
-            <Image
-                source={{ uri: `${pictureUrl}` }}
-                style={styles.image}
-            />
+            <ImageCard isTriggered={isTriggered} url={url} />
             {/* Movements */}
-            <MovementsCard/>
+            <MovementsCard movements={movements}/>
             {/* Show the data */}
             <Text>data: {data}</Text>
         </View>
-    
     );
 };
-
-const imgScl = 0.6;
 
 const styles = StyleSheet.create({
     container: {
         marginTop: SIZES.xLarge,
         flex: 1,
-        flexDirection: 'collumn',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
     },
@@ -110,12 +102,6 @@ const styles = StyleSheet.create({
     headerBtn: {
         fontSize: SIZES.medium,
         color: COLORS.gray,
-    },
-    image:
-      {
-        width: 640 * imgScl,
-        height: 480 * imgScl,
-        marginTop: 20
     },
     cardsContainer: {
         marginTop: SIZES.medium,
