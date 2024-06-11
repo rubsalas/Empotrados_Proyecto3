@@ -6,7 +6,7 @@ import { COLORS } from '../constants';
 import HomeHeader from '../components/headers/HomeHeader';
 import HomeCard from '../components/cards/HomeCard';
 
-const url = 'http://172.20.10.2:8888';
+const server_url = 'http://172.20.10.2:8888';
 
 const HomeScreen = () => {
 	const router = useRouter();
@@ -22,12 +22,7 @@ const HomeScreen = () => {
 			/>
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<HomeHeader/>
-				{/* Home Layout Image */}
-				{/* <View style={styles.containerImage}>
-					<Image source={homeLayoutImage} style={styles.image} resizeMode="cover"/>
-				</View> */}
-				{/* <Text style={styles.textInstructions}>Scroll down to control your home.</Text> */}
-				<HomeCard url={url}/>
+				<HomeCard url={server_url}/>
 			</ScrollView>
 		</SafeAreaView>
 	);

@@ -19,13 +19,13 @@ const LogInScreen = () => {
         if (email === 'admin@tec.ac.cr' && password === 'empotrados') {
             // Si coincide, navegar a la siguiente pantalla
             setIsLoggedIn(true);
-            console.log('handledLogin successfull');
+            console.log('handleLogin successfull');
             return true;
         } else {
             setIsLoggedIn(false);
             // Si no coincide, mostrar una alerta
             //Alert.alert('Error', 'El email o la contraseña son incorrectos');
-            console.log('handledLogin unsuccessfull');
+            console.log('handleLogin unsuccessfull');
             return false;
         }
     };
