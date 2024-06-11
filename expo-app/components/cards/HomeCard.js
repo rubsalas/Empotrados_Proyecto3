@@ -22,7 +22,7 @@ const HomeCard = ({ url }) => {
     const timerRef = useRef(null);
 
     /* Uso del hook useFetch para obtener el estado del sensor */
-    const { data, isLoading, error, refetch } = useFetch("time");
+    const { data, isLoading, error, refetch } = useFetch(url, 'sensor');
 
     /*
     Trae el ultimo tiempo en que se ha activado el sensor.
@@ -77,7 +77,6 @@ const HomeCard = ({ url }) => {
             {/* Movements */}
             <MovementsCard movements={movements}/>
             {/* Show the data */}
-            <Text>data: {data}</Text>
         </View>
     );
 };

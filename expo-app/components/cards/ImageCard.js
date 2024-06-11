@@ -4,14 +4,17 @@ import axios from 'axios';
 import { COLORS, SIZES } from '../../constants';
 
 const ImageCard = ({ isTriggered, url }) => {
-    const [imageSrc, setImageSrc] = useState('https://i.imgur.com/7GAe73O.jpeg');
+    const [imageSrc, setImageSrc] = useState('https://imgur.com/OzVKeIa.jpeg');
 
     useEffect(() => {
+        console.log(isTriggered, 'at ImageCard');
         if (isTriggered) {
             const fetchImage = async () => {
                 try {
-                    const response = await axios.get(url);
-                    setImageSrc(response.data);
+                    console.log('Fetching image from:', `${url}/picture`);
+                    const response = await axios.get(`${url}/picture`);
+                    console.log('Response data:', response.data);
+                    setImageSrc(response.data['link']);
                 } catch (error) {
                     console.error('Error fetching the image:', error);
                 }
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
-        //paddingHorizontal: 20,
+        paddingHorizontal: 20,
     },
     image: {
         width: 640 * imgScl,

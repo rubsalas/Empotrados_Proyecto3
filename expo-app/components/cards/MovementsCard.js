@@ -7,8 +7,8 @@ const MovementsCard = ({ movements }) => {
         <View style={styles.container}>
             {movements.map((movement, index) => (
                 <View key={index} style={styles.movement}>
-                    <Text style={styles.textMovement}>Movement detected</Text>
-                    <Text style={styles.textDate}>{movement}</Text>
+                    <Text style={styles.textMovement}>{!movement ? '' : 'Movement detected'}</Text>
+                    <Text style={styles.textDate}>{!movement ? '' : movement}</Text>
                 </View>
             ))}
         </View>

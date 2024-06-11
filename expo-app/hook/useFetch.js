@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // const url = 'http://172.20.10.2:8888';
-const url = 'http://192.168.50.180:8888';
+//const url = 'http://192.168.50.180:8888';
 
-const useFetch = (endpoint) => {
+const useFetch = (url, endpoint) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState([]);
     const [error, setError] = useState(null);

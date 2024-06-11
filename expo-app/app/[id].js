@@ -6,7 +6,7 @@ import { COLORS } from '../constants';
 import HomeHeader from '../components/headers/HomeHeader';
 import HomeCard from '../components/cards/HomeCard';
 
-const server_url = 'http://172.20.10.2:8888';
+const server_url = 'http://192.168.50.180:8888';
 
 const HomeScreen = () => {
 	const router = useRouter();
