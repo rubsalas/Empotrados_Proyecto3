@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include <microhttpd.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -13,10 +14,59 @@
 #define IMAGE_DIR "images"
 #define IMAGE_FILE "images/capture.jpg"
 #define IMAGE_URL_FILE "image_url.txt"
-#define CAMERA_DEVICE "/dev/video2"
+#define CAMERA_DEVICE "/dev/video1"
+#define TRIG_PIN 23
+#define ECHO_PIN 24
+#define SOUND_SPEED 34300  // cm/s
 #define IMGUR_UPLOAD_COMMAND "curl -s -H 'Authorization: Client-ID b50f7ce78eda865' -F 'image=@%s' https://api.imgur.com/3/image"
 
 static char last_image_url[1024] = {0};
+
+void setup_gpio() {
+    char command[128];
+    snprintf(command, sizeof(command), "raspi-gpio set %d op", TRIG_PIN);
+    system(command);
+    snprintf(command, sizeof(command), "raspi-gpio set %d ip", ECHO_PIN);
+    system(command);
+}
+
+double measure_distance() {
+    char command[128];
+    struct timespec start, end;
+    long duration;
+    double distance;
+
+    // Set TRIG_PIN to low for 2 microseconds
+    snprintf(command, sizeof(command), "raspi-gpio set %d dl", TRIG_PIN);
+    system(command);
+    usleep(2);
+
+    // Set TRIG_PIN to high for 10 microseconds
+    snprintf(command, sizeof(command), "raspi-gpio set %d dh", TRIG_PIN);
+    system(command);
+    usleep(10);
+    snprintf(command, sizeof(command), "raspi-gpio set %d dl", TRIG_PIN);
+    system(command);
+
+    // Wait for ECHO_PIN to go high
+    while (system("raspi-gpio get " ECHO_PIN " | grep -q 'level=0'") == 0);
+
+    // Start timing
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    // Wait for ECHO_PIN to go low
+    while (system("raspi-gpio get " ECHO_PIN " | grep -q 'level=1'") == 0);
+
+    // Stop timing
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    // Calculate duration in microseconds
+    duration = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
+
+    // Calculate distance in cm
+    distance = duration * SOUND_SPEED / 2 / 1000000.0;
+    return distance;
+}
 
 static int handler(void *cls, struct MHD_Connection *connection,
                    const char *url, const char *method, const char *version,
@@ -221,8 +271,29 @@ static int handler(void *cls, struct MHD_Connection *connection,
         return ret;
     }
 
-    // If the method is not GET to /time or /sensor or /picture or POST to /sensor or /picture, return method not allowed
-    const char *page = "Only GET to /time or /sensor or /picture or POST to /sensor or /picture is supported.";
+    // Handle GET request to /sensor_status
+    if (strcmp(method, "GET") == 0 && strcmp(url, "/sensor_status") == 0) {
+        double distance = measure_distance();
+        const char *status = distance <= 100.0 ? "activated" : "deactivated";
+
+        // Create a JSON object with the sensor status
+        json_t *json_response = json_object();
+        json_object_set_new(json_response, "status", json_string(status));
+        char *json_response_str = json_dumps(json_response, 0);
+        json_decref(json_response);
+
+        printf("Sensor status: %s (distance: %.2f cm)\n", status, distance);
+
+        // Send the HTTP response with the JSON containing the sensor status
+        response = MHD_create_response_from_buffer(strlen(json_response_str), (void *)json_response_str, MHD_RESPMEM_MUST_COPY);
+        ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+        MHD_destroy_response(response);
+        free(json_response_str);
+        return ret;
+    }
+
+    // If the method is not GET to /time, /sensor, /picture, /sensor_status or POST to /sensor, /picture, return method not allowed
+    const char *page = "Only GET to /time, /sensor, /picture, /sensor_status or POST to /sensor, /picture is supported.";
     response = MHD_create_response_from_buffer(strlen(page), (void *)page, MHD_RESPMEM_PERSISTENT);
     ret = MHD_queue_response(connection, MHD_HTTP_METHOD_NOT_ALLOWED, response);
     MHD_destroy_response(response);
@@ -230,6 +301,8 @@ static int handler(void *cls, struct MHD_Connection *connection,
 }
 
 int main() {
+    setup_gpio();
+
     struct MHD_Daemon *daemon;
 
     daemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY, PORT, NULL, NULL, &handler, NULL, MHD_OPTION_END);
