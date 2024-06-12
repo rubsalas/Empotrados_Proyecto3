@@ -1,75 +1,92 @@
 # Empotrados_Proyecto3
-Tercer proyecto del curso de Sistemas Empotrados del primer semestre 2024 del Instituto Tecnológico de Costa Rica
 
-En los zip, descomprima cada uno a excepcion del openembedded-dunfell, en la carpeta de poky-dunfell.
-El de openembedded solo saque el que dice meta-oe, igual, todos los meta deben estar en el directorio de pokydunfell.x.x.x
+Tercer proyecto del curso de Sistemas Empotrados del primer semestre 2024 del Instituto Tecnológico de Costa Rica.
 
-En la carpeta de la maquina, en mi caso rpi3, no se como llamo la suya, vaya a al conf y luego al bblayers.conf en este se debe ver asi
+## Instrucciones de Configuración
 
+1. Descomprima cada uno de los archivos ZIP en la carpeta `poky-dunfell`, con excepción del archivo `openembedded-dunfell`. Para este último, extraiga únicamente la carpeta `meta-oe` y colóquela en el directorio de `poky-dunfell`.
 
-#---bblayers.conf
-# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
-# changes incompatibly
-POKY_BBLAYERS_CONF_VERSION = "2"
+2. En la carpeta correspondiente a su máquina (en este ejemplo, `rpi3`), navegue a `conf` y edite el archivo `bblayers.conf` para que se vea así:
 
-BBPATH = "${TOPDIR}"
-BBFILES ?= ""
+    ```conf
+    # POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+    # changes incompatibly
+    POKY_BBLAYERS_CONF_VERSION = "2"
 
-BBLAYERS ?= " \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-poky \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-yocto-bsp \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-raspberrypi \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-atmel-dunfell \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-oe \
-  /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-clang-dunfell\
-  "
-  
-# -------bblayers.conf
-#Cambie las rutas a sus directorios
+    BBPATH = "${TOPDIR}"
+    BBFILES ?= ""
 
-Ahora vaya al archivo local.conf
+    BBLAYERS ?= " \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-poky \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-yocto-bsp \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-raspberrypi \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-atmel-dunfell \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-oe \
+      /home/jsantamaria/Documents/poky-dunfell-23.0.31/meta-clang-dunfell\
+    "
+    ```
 
-Y si debe ver asi
-#-----local.conf
-MACHINE ?= "raspberrypi3"
-INHERIT += "rm_work"
-DL_DIR ?= "/home/jsantamaria/Documents/poky-dunfell-23.0.31/downloads"
+    **Nota:** Cambie las rutas según su configuración de directorios.
 
-IMAGE_INSTALL_append = " fswebcam \
-    raspi-gpio \
-    jansson\
-    glibc\
-    libmicrohttpd\
-    rpi-gpio\
-    python3-rtimu\
-    rpio\
-    openmp\
-    "  
-    
-#-----Local.conf
+3. A continuación, edite el archivo `local.conf` para que se vea así:
 
-#Edite la parte de MACHINE con si raspberrypi3 o la que haya puesto
+    ```conf
+    MACHINE ?= "raspberrypi3"
+    INHERIT += "rm_work"
+    DL_DIR ?= "/home/jsantamaria/Documents/poky-dunfell-23.0.31/downloads"
 
-Ahora se tienen que cocinar las recetas en el directorio de poky-dunfell.x.x.x realice la inicializacion del ambiente . oe-init-build-env #su_carpeta, le tiene que tirar que puede hacer bitbake y otros
+    IMAGE_INSTALL_append = " fswebcam \
+        raspi-gpio \
+        jansson\
+        glibc\
+        libmicrohttpd\
+        rpi-gpio\
+        python3-rtimu\
+        rpio\
+        openmp\
+    "
+    ```
 
-$. oe-init-build-env rpi3
+    **Nota:** Asegúrese de cambiar la parte de `MACHINE` con `raspberrypi3` o la que corresponda a su configuración.
 
-ahora tiene que cocinar cada receta
+## Compilación de Recetas
 
-$bitbake raspi-gpio
+1. Inicialice el ambiente de compilación en el directorio `poky-dunfell` ejecutando:
 
-Asi con cada una de las recetas, una vez que tenga todas entonces solo queda cocinar de nuevo la imagen en mi caso seria
+    ```sh
+    . oe-init-build-env rpi3
+    ```
 
-$bitbake rpi-basic-image
+    Debería ver que puede ejecutar `bitbake` y otros comandos relacionados.
 
-Una vez realizada la imagen entonces solo queda copiarla
+2. Compile cada una de las recetas necesarias, por ejemplo:
 
-entre al directorio de la imagen en mi caso 
+    ```sh
+    bitbake raspi-gpio
+    ```
 
-$cd tmp/deploy/images/raspberrypi3
+    Repita este paso para cada una de las recetas listadas en `IMAGE_INSTALL_append` de su `local.conf`.
 
-Una vez ahi copie usando bmaptool la imagen
+3. Una vez compiladas todas las recetas, compile la imagen base:
 
-$sudo bmaptool copy rpi-basic-image-raspberrypi3.wic.bz2 /dev/sda
+    ```sh
+    bitbake rpi-basic-image
+    ```
+
+## Creación de la Imagen
+
+1. Entre al directorio de la imagen:
+
+    ```sh
+    cd tmp/deploy/images/raspberrypi3
+    ```
+
+2. Copie la imagen a su dispositivo usando `bmaptool`:
+
+    ```sh
+    sudo bmaptool copy rpi-basic-image-raspberrypi3.wic.bz2 /dev/sda
+    ```
+
+¡Y con esto debería tener su imagen lista para usarse!
 
