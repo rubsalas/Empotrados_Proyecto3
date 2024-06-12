@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     movement: {
         marginBottom: 10,
         flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     textMovement: {
         fontSize: SIZES.medium,

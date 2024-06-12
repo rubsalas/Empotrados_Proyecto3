@@ -101,9 +101,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     headerTitle: {
         fontSize: SIZES.large,

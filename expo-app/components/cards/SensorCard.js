@@ -6,7 +6,7 @@ const SensorCard = ({ isTriggered }) => {
 
     return (
         <View style={styles.container}>
-            <Text>Sensor Triggered: {isTriggered ? 'Yes' : 'No'}</Text>
+            <Text style={styles.text}>Sensor Triggered: {isTriggered ? 'Yes' : 'No'}</Text>
         </View>
     );
 };
@@ -19,6 +19,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 20,
     },
+    text: {
+		justifyContent: 'center',
+        alignSelf: 'center',
+        fontSize: SIZES.xLarge,
+        color: COLORS.black,
+	}
 });
 
 export default SensorCard;

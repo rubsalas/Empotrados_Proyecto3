@@ -4,7 +4,8 @@ import axios from 'axios';
 import { COLORS, SIZES } from '../../constants';
 
 const ImageCard = ({ isTriggered, url }) => {
-    const [imageSrc, setImageSrc] = useState('https://imgur.com/OzVKeIa.jpeg');
+    // const [imageSrc, setImageSrc] = useState('https://imgur.com/OzVKeIa.jpeg');
+    const [imageSrc, setImageSrc] = useState('https://imgur.com/a/ola-qxUxNsS');
 
     useEffect(() => {
         if (isTriggered) {
@@ -41,12 +42,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
     },
     image: {
         width: 640 * imgScl,
         height: 480 * imgScl,
         marginTop: 20,
+        marginBottom: 20,
     },
 });
 

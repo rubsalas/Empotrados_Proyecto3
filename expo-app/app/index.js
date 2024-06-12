@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS.white,
     },
     containerButton: {
-        width: "100%",
+        width: '100%',
         display: "flex",
         alignItems: "center",
         marginTop: 60,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 65,
-        color: COLORS.lightBlack,
+        color: COLORS.primary,
         fontWeight: 'bold',
         marginBottom: 60
     }
