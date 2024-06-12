@@ -1,5 +1,6 @@
 # Tercer proyecto del curso de Sistemas Empotrados del primer semestre 2024 del Instituto Tecnológico de Costa Rica
 
+
 ## App
 
 Se debe crear el proyecto del app con Expo, utilizando router.
@@ -127,4 +128,36 @@ Empezará a hacerse un Javascript bundle y finalmente se podrá ver la aplicaci�
     ```
 
 ¡Y con esto debería tener su imagen lista para usarse!
+
+
+## Server
+
+Obtener la direccion ip de la red a la cual se encuentra conectado
+
+```bash
+ip a
+```
+
+Modificar la direccion ip en el codigo en los defines del principio del rest_api.c
+
+
+
+Ejectuar el archivo ejecutable del servidor 
+
+```bash
+./rest_api
+```
+
+Una vez el servidor ejecutandose, los request pueden ser enviados mediante postman o usando postman o cualquier browser
+
+HTTP Requests
+
+
+POST http://192.168.50.180:8888/picture
+
+Este request es utilizado para tomar una captura con la camara
+
+GET http://192.168.50.180:8888/time
+
+Este request retorna el tiempo actual
 
