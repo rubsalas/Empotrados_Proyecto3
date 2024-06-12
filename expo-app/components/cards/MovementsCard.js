@@ -5,10 +5,10 @@ import { COLORS, SIZES } from '../../constants';
 const MovementsCard = ({ movements }) => {
     return (
         <View style={styles.container}>
-            {movements.map((movement, index) => (
+            {movements.length > 0 && movements.map((movement, index) => (
                 <View key={index} style={styles.movement}>
-                    <Text style={styles.textMovement}>{!movement ? '' : 'Movement detected'}</Text>
-                    <Text style={styles.textDate}>{!movement ? '' : movement}</Text>
+                    <Text style={styles.textMovement}>Movement detected</Text>
+                    <Text style={styles.textDate}>{movement}</Text>
                 </View>
             ))}
         </View>
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     },
     movement: {
         marginBottom: 10,
-        flex: 1,
         flexDirection: 'row',
     },
     textMovement: {
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
     textDate: {
         fontSize: SIZES.medium,
         color: COLORS.gray,
-        marginLeft: SIZES.medium
+        marginLeft: SIZES.medium,
     },
 });
 

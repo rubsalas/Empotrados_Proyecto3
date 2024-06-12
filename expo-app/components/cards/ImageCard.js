@@ -7,7 +7,6 @@ const ImageCard = ({ isTriggered, url }) => {
     const [imageSrc, setImageSrc] = useState('https://imgur.com/OzVKeIa.jpeg');
 
     useEffect(() => {
-        console.log(isTriggered, 'at ImageCard');
         if (isTriggered) {
             const fetchImage = async () => {
                 try {

@@ -20,6 +20,7 @@ const HomeCard = ({ url }) => {
     const [isTriggered, setIsTriggered] = useState(false);
     const [movements, setMovements] = useState([]);
     const timerRef = useRef(null);
+    const movementsRef = useRef([]);
 
     /* Uso del hook useFetch para obtener el estado del sensor */
     const { data, isLoading, error, refetch } = useFetch(url, 'sensor');
@@ -35,17 +36,27 @@ const HomeCard = ({ url }) => {
         return () => clearInterval(interval); // Limpia el intervalo cuando el componente se desmonta
     }, []);
 
-    /* El data que trae el useFetch el la ultima vez que se activo el sensor */
+    /* El data que trae el useFetch es la última vez que se activó el sensor */
     const lastTriggered = data;
 
     /*
-    Revisa la ultima fecha para actualizar lo que se trae del servidor.
+    Revisa la última fecha para actualizar lo que se trae del servidor.
     */
     useEffect(() => {
-        if (lastTriggered !== previousDate) {
+        if (lastTriggered && lastTriggered !== previousDate) {
             setPreviousDate(lastTriggered);
             setIsTriggered(true);
-            setMovements(prevMovements => [lastTriggered, ...prevMovements]);
+
+            // Modificar la referencia y eliminar el último elemento si es necesario
+            let updatedMovements = [lastTriggered, ...movementsRef.current];
+
+            // Verificar si el último elemento es un array vacío
+            if (Array.isArray(updatedMovements[updatedMovements.length - 1]) && updatedMovements[updatedMovements.length - 1].length === 0) {
+                updatedMovements = updatedMovements.slice(0, -1);
+            }
+
+            movementsRef.current = updatedMovements;
+            setMovements(updatedMovements);
 
             // Limpiar cualquier temporizador anterior
             if (timerRef.current) {
@@ -76,7 +87,7 @@ const HomeCard = ({ url }) => {
             <ImageCard isTriggered={isTriggered} url={url} />
             {/* Movements */}
             <MovementsCard movements={movements}/>
-            {/* Show the data */}
+            {/* Mostrar el último movimiento */}
         </View>
     );
 };
